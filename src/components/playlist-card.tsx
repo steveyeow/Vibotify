@@ -30,7 +30,7 @@ export function PlaylistCard({
 }: PlaylistCardProps) {
   return (
     <Link href={`/playlist/${id}`} className="group block rounded-lg p-3 transition-colors hover:bg-bg-elevated">
-      <div className="relative aspect-square w-full overflow-hidden rounded-md bg-bg-active shadow-lg shadow-black/30">
+      <div className="relative aspect-square w-full overflow-hidden rounded-md bg-bg-active shadow-lg shadow-card-shadow">
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -73,7 +73,7 @@ export function PlaylistCard({
         )}
 
         {/* Play button on hover */}
-        <div className="absolute bottom-2 right-2 flex h-10 w-10 translate-y-2 items-center justify-center rounded-full bg-accent opacity-0 shadow-xl shadow-black/40 transition-all group-hover:translate-y-0 group-hover:opacity-100">
+        <div className="absolute bottom-2 right-2 flex h-10 w-10 translate-y-2 items-center justify-center rounded-full bg-accent opacity-0 shadow-xl shadow-card-shadow transition-all group-hover:translate-y-0 group-hover:opacity-100">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="text-text-inverse ml-0.5">
             <polygon points="6 3 20 12 6 21 6 3" />
           </svg>
@@ -102,10 +102,10 @@ export function PlaylistCard({
                     alt=""
                     width={20}
                     height={20}
-                    className="rounded-full ring-2 ring-[#121212]"
+                    className="rounded-full ring-2 ring-ring-avatar"
                   />
                 ) : (
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-accent/20 text-[9px] font-bold text-accent ring-2 ring-[#121212]">
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-accent/20 text-[9px] font-bold text-accent ring-2 ring-ring-avatar">
                     {sharer.name?.[0]?.toUpperCase() || "?"}
                   </div>
                 )}

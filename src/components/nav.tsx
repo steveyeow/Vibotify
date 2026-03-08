@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
+import { ThemeToggle } from "./theme-toggle";
 
 export function Nav() {
   const { data: session, status } = useSession();
@@ -49,7 +50,8 @@ export function Nav() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
           {status === "loading" ? (
             <div className="h-8 w-8 animate-pulse rounded-full bg-bg-hover" />
           ) : session?.user ? (
@@ -85,25 +87,25 @@ export function Nav() {
                     className="fixed inset-0 z-40"
                     onClick={() => setMenuOpen(false)}
                   />
-                  <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-lg bg-[#282828] p-1 shadow-2xl">
+                  <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-lg bg-bg-menu p-1 shadow-2xl border border-border-subtle">
                     <Link
                       href={`/profile/${session.user.id}`}
-                      className="flex w-full items-center rounded-sm px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-white/10 hover:text-text-primary"
+                      className="flex w-full items-center rounded-sm px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-menu-hover hover:text-text-primary"
                       onClick={() => setMenuOpen(false)}
                     >
                       Profile
                     </Link>
                     <Link
                       href="/share"
-                      className="flex w-full items-center rounded-sm px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-white/10 hover:text-text-primary md:hidden"
+                      className="flex w-full items-center rounded-sm px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-menu-hover hover:text-text-primary md:hidden"
                       onClick={() => setMenuOpen(false)}
                     >
                       Share
                     </Link>
-                    <div className="my-1 h-px bg-white/10" />
+                    <div className="my-1 h-px bg-menu-divider" />
                     <button
                       onClick={() => signOut()}
-                      className="flex w-full items-center rounded-sm px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-white/10 hover:text-text-primary"
+                      className="flex w-full items-center rounded-sm px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-menu-hover hover:text-text-primary"
                     >
                       Log out
                     </button>
@@ -114,7 +116,7 @@ export function Nav() {
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-bold text-black transition-transform hover:scale-105 active:scale-100"
+              className="flex items-center gap-2 rounded-full bg-login-bg px-5 py-2 text-sm font-bold text-login-text transition-transform hover:scale-105 active:scale-100"
             >
               Log in
             </Link>
