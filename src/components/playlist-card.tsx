@@ -81,11 +81,6 @@ export function PlaylistCard({
             </span>
           </Link>
         </div>
-        {tags.length > 0 && (
-          <p className="mt-1 text-[11px] text-text-tertiary line-clamp-1">
-            {tags.join(", ")}
-          </p>
-        )}
         {(voteCount > 0 || commentCount > 0) && (
           <div className="mt-1.5 flex items-center gap-3 text-[11px] text-text-tertiary">
             {voteCount > 0 && (

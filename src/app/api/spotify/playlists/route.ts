@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { extractPlaylistId, getPlaylistViaOEmbed } from "@/lib/spotify";
+import { extractSpotifyId, detectSpotifyLinkType, getPlaylistViaOEmbed } from "@/lib/spotify";
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -14,26 +14,31 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing url parameter" }, { status: 400 });
   }
 
-  const playlistId = extractPlaylistId(spotifyUrl);
-  if (!playlistId) {
-    return NextResponse.json({ error: "Invalid Spotify playlist URL" }, { status: 400 });
+  const linkType = detectSpotifyLinkType(spotifyUrl);
+  const spotifyId = extractSpotifyId(spotifyUrl);
+
+  if (!spotifyId || !linkType) {
+    return NextResponse.json(
+      { error: "Please paste a Spotify playlist or artist link" },
+      { status: 400 }
+    );
   }
 
-  const playlist = await getPlaylistViaOEmbed(spotifyUrl);
-  if (!playlist) {
+  const result = await getPlaylistViaOEmbed(spotifyUrl);
+  if (!result) {
     return NextResponse.json(
-      { error: "Could not fetch playlist. Please check the URL and try again." },
+      { error: "Could not fetch info. Please check the URL and try again." },
       { status: 404 }
     );
   }
 
   return NextResponse.json({
-    id: playlist.id,
-    name: playlist.name,
-    description: playlist.description,
-    imageUrl: playlist.imageUrl,
-    spotifyUrl: playlist.spotifyUrl,
-    ownerName: playlist.ownerName,
+    id: result.id,
+    name: result.name,
+    description: result.description,
+    imageUrl: result.imageUrl,
+    spotifyUrl: result.spotifyUrl,
+    ownerName: result.ownerName,
     trackCount: 0,
     snapshotId: null,
     totalDurationMs: 0,
