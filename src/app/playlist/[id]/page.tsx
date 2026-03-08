@@ -10,6 +10,7 @@ import { formatTotalDuration, timeAgo } from "@/lib/utils";
 import { AddToLibrary } from "@/components/add-to-library";
 import { SaveToSpotify } from "@/components/save-to-spotify";
 import { CommentSection } from "@/components/comment-section";
+import { DeletePlaylist } from "@/components/delete-playlist";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -47,6 +48,11 @@ export default async function PlaylistPage({ params }: Props) {
   const allSharers = playlist.sharers.length > 0
     ? playlist.sharers
     : [{ user: playlist.user, vibeNote: playlist.vibeNote, createdAt: playlist.createdAt }];
+
+  const isSharer = session?.user?.id
+    ? playlist.userId === session.user.id || playlist.sharers.some((s) => s.user.id === session.user.id)
+    : false;
+  const isOnlySharer = playlist.sharers.length <= 1 && playlist.userId === session?.user?.id;
 
   return (
     <div className="animate-in">
@@ -103,6 +109,10 @@ export default async function PlaylistPage({ params }: Props) {
                 Open in Spotify ↗
               </a>
             </div>
+
+            {isSharer && (
+              <DeletePlaylist playlistId={id} isOnlySharer={isOnlySharer} />
+            )}
 
             <div className="flex items-center gap-3 text-sm text-text-secondary">
               <span>{playlist.trackCount} tracks</span>
