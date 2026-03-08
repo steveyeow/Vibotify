@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #000000;
+  --color-bg-elevated: #141416;
+  --color-bg-hover: #1c1c1f;
+  --color-bg-active: #242428;
+  --color-border: #27272a;
+  --color-border-subtle: #1e1e21;
+
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-tertiary: #71717a;
+  --color-text-inverse: #09090b;
+
+  --color-accent: #1db954;
+  --color-accent-hover: #1ed760;
+  --color-accent-muted: rgba(29, 185, 84, 0.12);
+
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: var(--color-accent-muted);
+    color: var(--color-accent);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-bold text-text-inverse transition-all hover:bg-accent-hover hover:scale-105 active:scale-100;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-[#727272] px-5 py-2.5 text-sm font-bold text-text-primary transition-all hover:border-white hover:scale-105 active:scale-100;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-text-secondary transition-all hover:bg-bg-hover hover:text-text-primary active:scale-[0.97];
+  }
+
+  .tag {
+    @apply inline-flex items-center rounded-full bg-[#232323] px-3.5 py-1.5 text-xs font-bold text-text-secondary transition-all hover:bg-[#2a2a2a] hover:text-text-primary;
+  }
+
+  .tag-active {
+    @apply inline-flex items-center rounded-full bg-white px-3.5 py-1.5 text-xs font-bold text-black;
+  }
+
+  .card {
+    @apply rounded-2xl border border-border-subtle bg-bg-elevated p-5 transition-all hover:border-border hover:bg-bg-hover;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-border bg-bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/20 transition-all;
+  }
+
+  .textarea {
+    @apply w-full rounded-xl border border-border bg-bg-elevated px-4 py-3 text-sm text-text-primary placeholder:text-text-tertiary focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/20 transition-all resize-none;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-accent to-emerald-300 bg-clip-text text-transparent;
+  }
+
+  .animate-in {
+    animation: animate-in 0.4s ease-out;
+  }
+
+  @keyframes animate-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .stagger-1 { animation-delay: 0.05s; }
+  .stagger-2 { animation-delay: 0.1s; }
+  .stagger-3 { animation-delay: 0.15s; }
+  .stagger-4 { animation-delay: 0.2s; }
+}
