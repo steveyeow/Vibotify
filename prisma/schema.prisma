@@ -45,13 +45,14 @@ model User {
   spotifyId     String?   @unique
   createdAt     DateTime  @default(now())
 
-  accounts  Account[]
-  sessions  Session[]
-  playlists SharedPlaylist[]
-  votes     Vote[]
-  comments  Comment[]
-  followers Follow[]       @relation("following")
-  following Follow[]       @relation("follower")
+  accounts       Account[]
+  sessions       Session[]
+  playlists      SharedPlaylist[]
+  sharedEntries  PlaylistSharer[]
+  votes          Vote[]
+  comments       Comment[]
+  followers      Follow[]       @relation("following")
+  following      Follow[]       @relation("follower")
 }
 
 model VerificationToken {
@@ -73,6 +74,7 @@ model SharedPlaylist {
   totalDurationMs Int      @default(0)
   ownerName       String?
   snapshotId      String?
+  type            String   @default("playlist")
   tags            String[] @default([])
   vibeNote        String?  @db.Text
   createdAt       DateTime @default(now())
@@ -80,11 +82,27 @@ model SharedPlaylist {
 
   userId   String
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sharers  PlaylistSharer[]
   votes    Vote[]
   comments Comment[]
 
   @@index([createdAt(sort: Desc)])
   @@index([userId])
+}
+
+model PlaylistSharer {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  vibeNote   String?  @db.Text
+  tags       String[] @default([])
+
+  userId     String
+  playlistId String
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  playlist   SharedPlaylist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, playlistId])
+  @@index([playlistId])
 }
 
 model Vote {

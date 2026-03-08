@@ -32,7 +32,12 @@ export default async function ExplorePage({ searchParams }: Props) {
       take: limit,
       include: {
         user: { select: { id: true, name: true, image: true } },
-        _count: { select: { votes: true, comments: true } },
+        sharers: {
+          include: { user: { select: { id: true, name: true, image: true } } },
+          orderBy: { createdAt: "asc" },
+          take: 5,
+        },
+        _count: { select: { votes: true, comments: true, sharers: true } },
       },
     }),
     prisma.sharedPlaylist.count({ where }),
@@ -85,22 +90,23 @@ export default async function ExplorePage({ searchParams }: Props) {
       {playlists.length > 0 ? (
         <>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {playlists.map((playlist) => (
-              <PlaylistCard
-                key={playlist.id}
-                id={playlist.id}
-                name={playlist.name}
-                imageUrl={playlist.imageUrl}
-                userName={playlist.user.name || "Anonymous"}
-                userImage={playlist.user.image}
-                userId={playlist.user.id}
-                tags={playlist.tags}
-                voteCount={playlist._count.votes}
-                commentCount={playlist._count.comments}
-                trackCount={playlist.trackCount}
-                vibeNote={playlist.vibeNote}
-              />
-            ))}
+            {playlists.map((playlist) => {
+              const sharers = playlist.sharers.length > 0
+                ? playlist.sharers.map((s) => s.user)
+                : [playlist.user];
+              return (
+                <PlaylistCard
+                  key={playlist.id}
+                  id={playlist.id}
+                  name={playlist.name}
+                  imageUrl={playlist.imageUrl}
+                  sharers={sharers}
+                  voteCount={playlist._count.votes}
+                  commentCount={playlist._count.comments}
+                  sharerCount={playlist._count.sharers}
+                />
+              );
+            })}
           </div>
 
           {/* Pagination */}

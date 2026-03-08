@@ -16,6 +16,7 @@ interface PlaylistPreview {
   ownerName: string;
   snapshotId: string;
   totalDurationMs?: number;
+  type?: string;
 }
 
 type ShareMethod = "url" | "import";
@@ -114,13 +115,14 @@ export default function SharePage() {
           totalDurationMs: selected.totalDurationMs || 0,
           ownerName: selected.ownerName,
           snapshotId: selected.snapshotId,
+          type: selected.type || "playlist",
           tags,
           vibeNote: vibeNote.trim() || null,
         }),
       });
 
       if (res.status === 409) {
-        setError("This playlist has already been shared by someone.");
+        setError("You have already shared this playlist.");
         return;
       }
       if (!res.ok) {
@@ -337,7 +339,7 @@ export default function SharePage() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleFetchUrl()}
-              placeholder="https://open.spotify.com/playlist/... or /artist/..."
+              placeholder="https://open.spotify.com/playlist/... or /album/... or /artist/..."
               className="input flex-1 font-mono text-sm"
             />
             <button
@@ -355,7 +357,7 @@ export default function SharePage() {
             </button>
           </div>
           <p className="mt-2 text-xs text-text-tertiary">
-            Open Spotify → right-click a playlist or artist → Share → Copy link
+            Open Spotify → right-click a playlist, album, or artist → Share → Copy link
           </p>
         </div>
       )}

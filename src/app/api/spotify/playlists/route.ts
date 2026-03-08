@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 
   if (!spotifyId || !linkType) {
     return NextResponse.json(
-      { error: "Please paste a Spotify playlist or artist link" },
+      { error: "Please paste a Spotify playlist, album, or artist link" },
       { status: 400 }
     );
   }
@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
     imageUrl: result.imageUrl,
     spotifyUrl: result.spotifyUrl,
     ownerName: result.ownerName,
+    type: linkType,
     trackCount: 0,
     snapshotId: null,
     totalDurationMs: 0,

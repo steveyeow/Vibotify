@@ -20,16 +20,24 @@ export default async function ProfilePage({ params }: Props) {
   const user = await prisma.user.findUnique({
     where: { id },
     include: {
-      playlists: {
+      sharedEntries: {
         orderBy: { createdAt: "desc" },
         include: {
-          user: { select: { id: true, name: true, image: true } },
-          _count: { select: { votes: true, comments: true } },
+          playlist: {
+            include: {
+              sharers: {
+                include: { user: { select: { id: true, name: true, image: true } } },
+                orderBy: { createdAt: "asc" },
+                take: 5,
+              },
+              _count: { select: { votes: true, comments: true, sharers: true } },
+            },
+          },
         },
       },
       _count: {
         select: {
-          playlists: true,
+          sharedEntries: true,
           followers: true,
           following: true,
         },
@@ -53,8 +61,14 @@ export default async function ProfilePage({ params }: Props) {
   const isOwnProfile = session?.user?.id === id;
 
   const totalVotes = await prisma.vote.count({
-    where: { playlist: { userId: id } },
+    where: {
+      playlist: {
+        sharers: { some: { userId: id } },
+      },
+    },
   });
+
+  const playlists = user.sharedEntries.map((entry) => entry.playlist);
 
   return (
     <div className="animate-in">
@@ -89,7 +103,7 @@ export default async function ProfilePage({ params }: Props) {
           <div className="mt-3 flex items-center gap-5 text-sm text-text-tertiary">
             <span>
               <strong className="text-text-secondary">
-                {user._count.playlists}
+                {user._count.sharedEntries}
               </strong>{" "}
               playlists
             </span>
@@ -120,27 +134,28 @@ export default async function ProfilePage({ params }: Props) {
       {/* Playlists */}
       <div className="mt-10">
         <h2 className="mb-6 text-xl font-semibold">
-          Shared playlists ({user.playlists.length})
+          Shared playlists ({playlists.length})
         </h2>
 
-        {user.playlists.length > 0 ? (
+        {playlists.length > 0 ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {user.playlists.map((playlist) => (
-              <PlaylistCard
-                key={playlist.id}
-                id={playlist.id}
-                name={playlist.name}
-                imageUrl={playlist.imageUrl}
-                userName={playlist.user.name || "Anonymous"}
-                userImage={playlist.user.image}
-                userId={playlist.user.id}
-                tags={playlist.tags}
-                voteCount={playlist._count.votes}
-                commentCount={playlist._count.comments}
-                trackCount={playlist.trackCount}
-                vibeNote={playlist.vibeNote}
-              />
-            ))}
+            {playlists.map((playlist) => {
+              const sharers = playlist.sharers.length > 0
+                ? playlist.sharers.map((s) => s.user)
+                : [];
+              return (
+                <PlaylistCard
+                  key={playlist.id}
+                  id={playlist.id}
+                  name={playlist.name}
+                  imageUrl={playlist.imageUrl}
+                  sharers={sharers}
+                  voteCount={playlist._count.votes}
+                  commentCount={playlist._count.comments}
+                  sharerCount={playlist._count.sharers}
+                />
+              );
+            })}
           </div>
         ) : (
           <div className="py-16 text-center">

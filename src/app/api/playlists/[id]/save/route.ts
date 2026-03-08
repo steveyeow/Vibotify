@@ -71,21 +71,37 @@ export async function POST(
     return NextResponse.json({ error: "No Spotify access" }, { status: 401 });
   }
 
-  const res = await fetch(
-    `https://api.spotify.com/v1/playlists/${playlist.spotifyId}/followers`,
-    {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ public: false }),
-    }
-  );
+  let res: Response;
+
+  if (playlist.type === "album") {
+    res = await fetch(
+      `https://api.spotify.com/v1/me/albums`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: [playlist.spotifyId] }),
+      }
+    );
+  } else {
+    res = await fetch(
+      `https://api.spotify.com/v1/playlists/${playlist.spotifyId}/followers`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ public: false }),
+      }
+    );
+  }
 
   if (!res.ok) {
     return NextResponse.json(
-      { error: "Failed to save playlist to Spotify" },
+      { error: "Failed to save to Spotify" },
       { status: 500 }
     );
   }

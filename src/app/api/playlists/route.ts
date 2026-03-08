@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
   if (limited) return limited;
 
   const body = await req.json();
-  const { spotifyId, name, description, imageUrl, spotifyUrl, trackCount, totalDurationMs, ownerName, snapshotId, tags, vibeNote } = body;
+  const { spotifyId, name, description, imageUrl, spotifyUrl, trackCount, totalDurationMs, ownerName, snapshotId, tags, vibeNote, type } = body;
 
   if (!spotifyId || !name) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -74,13 +74,27 @@ export async function POST(req: NextRequest) {
 
   const existing = await prisma.sharedPlaylist.findUnique({
     where: { spotifyId },
+    include: { sharers: { where: { userId: session.user.id } } },
   });
 
   if (existing) {
-    return NextResponse.json(
-      { error: "This playlist has already been shared" },
-      { status: 409 }
-    );
+    if (existing.sharers.length > 0) {
+      return NextResponse.json(
+        { error: "You have already shared this playlist" },
+        { status: 409 }
+      );
+    }
+
+    await prisma.playlistSharer.create({
+      data: {
+        userId: session.user.id,
+        playlistId: existing.id,
+        vibeNote: vibeNote || null,
+        tags: tags || [],
+      },
+    });
+
+    return NextResponse.json(existing, { status: 200 });
   }
 
   const playlist = await prisma.sharedPlaylist.create({
@@ -94,9 +108,17 @@ export async function POST(req: NextRequest) {
       totalDurationMs: totalDurationMs || 0,
       ownerName,
       snapshotId,
+      type: type || "playlist",
       tags: tags || [],
       vibeNote,
       userId: session.user.id,
+      sharers: {
+        create: {
+          userId: session.user.id,
+          vibeNote: vibeNote || null,
+          tags: tags || [],
+        },
+      },
     },
   });
 

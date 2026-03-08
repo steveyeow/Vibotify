@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils";
 interface SaveToSpotifyProps {
   playlistId: string;
   spotifyId: string;
+  type?: string;
 }
 
-export function SaveToSpotify({ playlistId, spotifyId }: SaveToSpotifyProps) {
+export function SaveToSpotify({ playlistId, spotifyId, type = "playlist" }: SaveToSpotifyProps) {
   const { data: session } = useSession();
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,7 +35,7 @@ export function SaveToSpotify({ playlistId, spotifyId }: SaveToSpotifyProps) {
 
   return (
     <a
-      href={`https://open.spotify.com/playlist/${spotifyId}`}
+      href={`https://open.spotify.com/${type}/${spotifyId}`}
       target="_blank"
       rel="noopener noreferrer"
       onClick={(e) => {

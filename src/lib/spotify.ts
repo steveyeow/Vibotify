@@ -7,11 +7,14 @@ export interface SpotifyPlaylistInfo {
   ownerName: string | null;
 }
 
-export type SpotifyLinkType = "playlist" | "artist" | null;
+export type SpotifyLinkType = "playlist" | "artist" | "album" | null;
 
 export function detectSpotifyLinkType(input: string): SpotifyLinkType {
   if (/open\.spotify\.com\/playlist\/[a-zA-Z0-9]+/.test(input) || /spotify:playlist:/.test(input)) {
     return "playlist";
+  }
+  if (/open\.spotify\.com\/album\/[a-zA-Z0-9]+/.test(input) || /spotify:album:/.test(input)) {
+    return "album";
   }
   if (/open\.spotify\.com\/artist\/[a-zA-Z0-9]+/.test(input) || /spotify:artist:/.test(input)) {
     return "artist";
@@ -21,11 +24,11 @@ export function detectSpotifyLinkType(input: string): SpotifyLinkType {
 
 export function extractSpotifyId(input: string): string | null {
   const urlMatch = input.match(
-    /open\.spotify\.com\/(?:playlist|artist)\/([a-zA-Z0-9]+)/
+    /open\.spotify\.com\/(?:playlist|artist|album)\/([a-zA-Z0-9]+)/
   );
   if (urlMatch) return urlMatch[1];
 
-  const uriMatch = input.match(/spotify:(?:playlist|artist):([a-zA-Z0-9]+)/);
+  const uriMatch = input.match(/spotify:(?:playlist|artist|album):([a-zA-Z0-9]+)/);
   if (uriMatch) return uriMatch[1];
 
   return null;

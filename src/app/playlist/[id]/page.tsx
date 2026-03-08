@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { formatTotalDuration, timeAgo } from "@/lib/utils";
-import { VoteButton } from "@/components/vote-button";
+import { AddToLibrary } from "@/components/add-to-library";
 import { SaveToSpotify } from "@/components/save-to-spotify";
 import { CommentSection } from "@/components/comment-section";
 
@@ -23,6 +23,10 @@ export default async function PlaylistPage({ params }: Props) {
     where: { id },
     include: {
       user: { select: { id: true, name: true, image: true } },
+      sharers: {
+        include: { user: { select: { id: true, name: true, image: true } } },
+        orderBy: { createdAt: "asc" },
+      },
       _count: { select: { votes: true, comments: true } },
     },
   });
@@ -39,6 +43,10 @@ export default async function PlaylistPage({ params }: Props) {
         },
       }))
     : false;
+
+  const allSharers = playlist.sharers.length > 0
+    ? playlist.sharers
+    : [{ user: playlist.user, vibeNote: playlist.vibeNote, createdAt: playlist.createdAt }];
 
   return (
     <div className="animate-in">
@@ -79,13 +87,13 @@ export default async function PlaylistPage({ params }: Props) {
           </div>
 
           <div className="mt-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <VoteButton
+            <div className="flex flex-wrap items-center gap-2">
+              <AddToLibrary
                 playlistId={id}
                 initialVoted={hasVoted}
                 initialCount={playlist._count.votes}
               />
-              <SaveToSpotify playlistId={id} spotifyId={playlist.spotifyId} />
+              <SaveToSpotify playlistId={id} spotifyId={playlist.spotifyId} type={playlist.type} />
               <a
                 href={playlist.spotifyUrl}
                 target="_blank"
@@ -116,30 +124,41 @@ export default async function PlaylistPage({ params }: Props) {
               </div>
             )}
 
-            <Link
-              href={`/profile/${playlist.user.id}`}
-              className="flex items-center gap-2.5 rounded-xl border border-border-subtle p-3 transition-colors hover:bg-bg-hover"
-            >
-              {playlist.user.image ? (
-                <Image
-                  src={playlist.user.image}
-                  alt=""
-                  width={36}
-                  height={36}
-                  className="rounded-full"
-                />
-              ) : (
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/20 text-sm font-medium text-accent">
-                  {playlist.user.name?.[0]?.toUpperCase()}
-                </div>
-              )}
-              <div>
-                <p className="text-sm font-medium">{playlist.user.name}</p>
-                <p className="text-xs text-text-tertiary">
-                  Shared {timeAgo(playlist.createdAt)}
-                </p>
-              </div>
-            </Link>
+            {/* Sharers */}
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-text-tertiary uppercase tracking-wider">
+                Shared by
+              </p>
+              {allSharers.map((sharer, i) => (
+                <Link
+                  key={i}
+                  href={`/profile/${sharer.user.id}`}
+                  className="flex items-center gap-2.5 rounded-xl border border-border-subtle p-3 transition-colors hover:bg-bg-hover"
+                >
+                  {sharer.user.image ? (
+                    <Image
+                      src={sharer.user.image}
+                      alt=""
+                      width={36}
+                      height={36}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/20 text-sm font-medium text-accent">
+                      {sharer.user.name?.[0]?.toUpperCase()}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium truncate">{sharer.user.name}</p>
+                    {sharer.vibeNote && (
+                      <p className="text-xs text-text-tertiary truncate italic">
+                        &ldquo;{sharer.vibeNote}&rdquo;
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -148,12 +167,6 @@ export default async function PlaylistPage({ params }: Props) {
           <h1 className="text-3xl font-semibold tracking-tight">
             {playlist.name}
           </h1>
-
-          {playlist.vibeNote && (
-            <p className="mt-3 text-text-secondary italic">
-              &ldquo;{playlist.vibeNote}&rdquo;
-            </p>
-          )}
 
           {playlist.description && (
             <p className="mt-3 text-sm text-text-tertiary">
@@ -164,7 +177,7 @@ export default async function PlaylistPage({ params }: Props) {
           {/* Spotify Embed */}
           <div className="mt-8 overflow-hidden rounded-xl">
             <iframe
-              src={`https://open.spotify.com/embed/playlist/${playlist.spotifyId}?utm_source=generator&theme=0`}
+              src={`https://open.spotify.com/embed/${playlist.type || "playlist"}/${playlist.spotifyId}?utm_source=generator&theme=0`}
               width="100%"
               height="480"
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
