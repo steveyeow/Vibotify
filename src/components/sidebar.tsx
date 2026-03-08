@@ -103,13 +103,34 @@ export function Sidebar() {
       {/* List */}
       <div className="flex-1 overflow-y-auto px-2 py-2 scrollbar-thin">
         {!session ? (
-          <div className="px-3 py-6">
-            <p className="text-sm font-bold">Create your library</p>
-            <p className="mt-1 text-xs text-text-secondary leading-relaxed">
-              Log in to save playlists and follow developers.
-            </p>
-            <Link href="/login" className="mt-4 inline-flex rounded-full bg-white px-4 py-1.5 text-xs font-bold text-black hover:scale-105 transition-transform">
-              Log in
+          <div className="space-y-1 px-1 py-2">
+            <Link
+              href="/explore"
+              className="flex items-center gap-3 rounded-md p-2.5 transition-colors hover:bg-white/5"
+            >
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-[#232323]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
+                  <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Discover playlists</p>
+                <p className="text-[11px] text-text-tertiary">Find your next coding vibe</p>
+              </div>
+            </Link>
+            <Link
+              href="/explore?sort=popular"
+              className="flex items-center gap-3 rounded-md p-2.5 transition-colors hover:bg-white/5"
+            >
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-[#232323]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Discover coders</p>
+                <p className="text-[11px] text-text-tertiary">See what others vibe to</p>
+              </div>
             </Link>
           </div>
         ) : loading ? (

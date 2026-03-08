@@ -21,18 +21,21 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "vibotify — the playlist behind the code",
+  title: "Vibotify — the playlist behind the code",
   description:
     "Discover what developers listen to in their flow state. Share your playlist, find your next favorite.",
+  icons: {
+    icon: "/favicon.svg",
+  },
   openGraph: {
-    title: "vibotify — the playlist behind the code",
+    title: "Vibotify — the playlist behind the code",
     description:
       "Discover what developers listen to in their flow state.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "vibotify — the playlist behind the code",
+    title: "Vibotify — the playlist behind the code",
     description:
       "Discover what developers listen to in their flow state.",
   },
@@ -48,12 +51,12 @@ export default function RootLayout({
       lang="en"
       className={`${dmSans.variable} ${playfair.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="min-h-screen bg-bg">
+      <body className="h-screen overflow-hidden bg-bg">
         <Providers>
           <Nav />
-          <div className="flex gap-2 px-2 pb-2">
+          <div className="flex gap-2 px-2 pb-2" style={{ height: "calc(100vh - 56px)" }}>
             <Sidebar />
-            <main className="flex-1 overflow-hidden rounded-lg bg-[#121212] px-6 pb-20 pt-6">
+            <main className="flex-1 overflow-y-auto rounded-lg bg-[#121212] px-6 pb-20 pt-6">
               {children}
             </main>
           </div>

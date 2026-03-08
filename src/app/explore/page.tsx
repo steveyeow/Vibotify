@@ -55,8 +55,8 @@ export default async function ExplorePage({ searchParams }: Props) {
         <h1 className="text-2xl font-semibold tracking-tight">Explore</h1>
       </div>
 
-      {/* Filters — single row */}
-      <div className="mb-8 flex flex-wrap items-center gap-2">
+      {/* Filters — single scrollable row */}
+      <div className="mb-8 flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         <Link
           href={buildUrl({ sort: "recent", tag: undefined, page: "1" })}
           className={sort === "recent" && !tag ? "tag-active" : "tag"}
@@ -69,7 +69,7 @@ export default async function ExplorePage({ searchParams }: Props) {
         >
           Popular
         </Link>
-        <span className="mx-1 h-4 w-px bg-border-subtle" />
+        <span className="mx-1 h-4 w-px shrink-0 bg-border-subtle" />
         {VIBE_TAGS.map((t) => (
           <Link
             key={t}

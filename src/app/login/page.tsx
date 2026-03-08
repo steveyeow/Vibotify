@@ -21,7 +21,7 @@ export default function LoginPage() {
           </svg>
         </div>
 
-        <h1 className="text-2xl font-bold">Log in to vibotify</h1>
+        <h1 className="text-2xl font-bold">Log in to Vibotify</h1>
         <p className="mt-3 text-sm text-text-secondary">
           Share playlists, vote, comment, and connect with other developers.
         </p>

@@ -58,11 +58,11 @@
   }
 
   .tag {
-    @apply inline-flex items-center rounded-full bg-[#232323] px-3.5 py-1.5 text-xs font-bold text-text-secondary transition-all hover:bg-[#2a2a2a] hover:text-text-primary;
+    @apply inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-[#232323] px-3.5 py-1.5 text-xs font-bold text-text-secondary transition-all hover:bg-[#2a2a2a] hover:text-text-primary;
   }
 
   .tag-active {
-    @apply inline-flex items-center rounded-full bg-white px-3.5 py-1.5 text-xs font-bold text-black;
+    @apply inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-white px-3.5 py-1.5 text-xs font-bold text-black;
   }
 
   .card {

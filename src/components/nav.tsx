@@ -29,7 +29,7 @@ export function Nav() {
               </svg>
             </div>
             <span className="text-lg font-extrabold tracking-tight">
-              vibotify
+              Vibotify
             </span>
           </Link>
 
