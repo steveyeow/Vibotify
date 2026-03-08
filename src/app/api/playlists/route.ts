@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, getRateLimitKey, RATE_LIMITS } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
+  const limited = rateLimit(getRateLimitKey(req, "playlists:get"), RATE_LIMITS.read);
+  if (limited) return limited;
   const { searchParams } = new URL(req.url);
   const tag = searchParams.get("tag");
   const sort = searchParams.get("sort") || "recent";
@@ -58,6 +61,9 @@ export async function POST(req: NextRequest) {
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const limited = rateLimit(getRateLimitKey(req, "playlists:post", session.user.id), RATE_LIMITS.write);
+  if (limited) return limited;
 
   const body = await req.json();
   const { spotifyId, name, description, imageUrl, spotifyUrl, trackCount, totalDurationMs, ownerName, snapshotId, tags, vibeNote } = body;

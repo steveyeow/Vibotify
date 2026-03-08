@@ -1,9 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, getRateLimitKey, RATE_LIMITS } from "@/lib/rate-limit";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const limited = rateLimit(getRateLimitKey(req, "library"), RATE_LIMITS.read);
+  if (limited) return limited;
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ playlists: [], following: [] });

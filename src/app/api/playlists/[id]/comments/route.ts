@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, getRateLimitKey, RATE_LIMITS } from "@/lib/rate-limit";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const limited = rateLimit(getRateLimitKey(req, "comments:get"), RATE_LIMITS.read);
+  if (limited) return limited;
   const { id } = await params;
 
   const comments = await prisma.comment.findMany({
@@ -28,6 +31,9 @@ export async function POST(
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const limited = rateLimit(getRateLimitKey(req, "comments:post", session.user.id), RATE_LIMITS.write);
+  if (limited) return limited;
 
   const { id } = await params;
   const { content } = await req.json();

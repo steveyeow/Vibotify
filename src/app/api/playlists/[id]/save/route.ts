@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, getRateLimitKey, RATE_LIMITS } from "@/lib/rate-limit";
 
 async function getUserAccessToken(userId: string): Promise<string | null> {
   const account = await prisma.account.findFirst({
@@ -51,6 +52,9 @@ export async function POST(
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const limited = rateLimit(getRateLimitKey(req, "save", session.user.id), RATE_LIMITS.spotify);
+  if (limited) return limited;
 
   const { id } = await params;
 
