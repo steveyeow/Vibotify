@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import VibeCoderPixel from "@/components/vibe-coder-pixel";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex min-h-full animate-in flex-col justify-center" style={{ marginTop: "-8vh" }}>
+    <div className="flex min-h-full animate-in items-center justify-between gap-8 lg:gap-16" style={{ marginTop: "-8vh" }}>
       <div className="max-w-2xl">
         <h1 className="font-display text-5xl leading-[1.08] tracking-tight md:text-6xl lg:text-7xl">
           The playlist
@@ -32,6 +33,10 @@ export default async function Home() {
             Share yours
           </Link>
         </div>
+      </div>
+
+      <div className="hidden md:block w-full max-w-xs lg:max-w-sm xl:max-w-[420px] shrink-0">
+        <VibeCoderPixel />
       </div>
     </div>
   );
